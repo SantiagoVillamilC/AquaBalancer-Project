@@ -80,7 +80,7 @@ u {
 
 .textIntro {
   margin: 0;
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: 700;
 }
 
@@ -97,4 +97,12 @@ u {
 .containerIntroInfo button {
   margin: 5%;
   font-size: 1rem;
+}
+.classButtons{
+  display: flex;
+  justify-content: space-between;
+}
+
+.box {
+  width: 300px;
 }
