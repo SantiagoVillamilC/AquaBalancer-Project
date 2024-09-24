@@ -1,18 +1,32 @@
 import React, { useState } from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar, Doughnut, Scatter } from 'react-chartjs-2';
 import { create, all } from 'mathjs';
+import { motion } from 'framer-motion';
+import './Aqua.css'
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const math = create(all);
 
@@ -21,7 +35,7 @@ const AquaOptimizer = () => {
   const poblacionFunza = 105086;
   const poblacionMosquera = 130221;
 
-  const consumoPorHabitante = 15; // Consumo promedio de agua por persona
+  const consumoPorHabitante = 15; // Consumo promedio por habitante en litros
   const consumoTotal = (poblacionBogota + poblacionFunza + poblacionMosquera) * consumoPorHabitante;
 
   const [aguaDisponible, setAguaDisponible] = useState(Math.min(consumoTotal, 500000000));
@@ -31,7 +45,7 @@ const AquaOptimizer = () => {
 
   const prioridadBogota = 0.45;
   const prioridadFunza = 0.35;
-  const prioridadMosquera = 0.2;
+  const prioridadMosquera = 0.3;
 
   const [historialSatisfaccion, setHistorialSatisfaccion] = useState({
     bogota: [],
@@ -43,6 +57,12 @@ const AquaOptimizer = () => {
     bogota: null,
     funza: null,
     mosquera: null
+  });
+
+  // Datos iniciales vacíos para los gráficos
+  const [dataBarras, setDataBarras] = useState({
+    labels: ['Bogotá', 'Funza', 'Mosquera'],
+    datasets: []
   });
 
   const generarValoresAleatorios = () => {
@@ -60,38 +80,11 @@ const AquaOptimizer = () => {
   };
 
   const optimizarDistribucionAgua = () => {
-    const aguaAnteriorBogota = ultimosValoresSatisfaccion.bogota;
-    const aguaAnteriorFunza = ultimosValoresSatisfaccion.funza;
-    const aguaAnteriorMosquera = ultimosValoresSatisfaccion.mosquera;
-
     generarValoresAleatorios();
 
-    const funcionLagrange = (aguaBogota, aguaFunza, aguaMosquera, lambda) => {
-      const satisfaccionTotal =
-        prioridadBogota * calcularSatisfaccion(aguaBogota, contaminante, temperatura, prioridadBogota) +
-        prioridadFunza * calcularSatisfaccion(aguaFunza, contaminante, temperatura, prioridadFunza) +
-        prioridadMosquera * calcularSatisfaccion(aguaMosquera, contaminante, temperatura, prioridadMosquera);
-
-      const restriccion = aguaBogota + aguaFunza + aguaMosquera - aguaDisponible;
-      return satisfaccionTotal - lambda * restriccion;
-    };
-
-    const derivadaAguaBogota = (aguaBogota, lambda) => calcularSatisfaccion(aguaBogota, contaminante, temperatura, prioridadBogota) - lambda;
-    const derivadaAguaFunza = (aguaFunza, lambda) => calcularSatisfaccion(aguaFunza, contaminante, temperatura, prioridadFunza) - lambda;
-    const derivadaAguaMosquera = (aguaMosquera, lambda) => calcularSatisfaccion(aguaMosquera, contaminante, temperatura, prioridadMosquera) - lambda;
-    const derivadaLambda = (aguaBogota, aguaFunza, aguaMosquera) => aguaBogota + aguaFunza + aguaMosquera - aguaDisponible;
-
-    let aguaBogota = aguaDisponible * prioridadBogota;
-    let aguaFunza = aguaDisponible * prioridadFunza;
-    let aguaMosquera = aguaDisponible * prioridadMosquera;
-    let lambda = 0;
-
-    for (let i = 0; i < 100; i++) {
-      aguaBogota -= 0.01 * derivadaAguaBogota(aguaBogota, lambda);
-      aguaFunza -= 0.01 * derivadaAguaFunza(aguaFunza, lambda);
-      aguaMosquera -= 0.01 * derivadaAguaMosquera(aguaMosquera, lambda);
-      lambda -= 0.01 * derivadaLambda(aguaBogota, aguaFunza, aguaMosquera);
-    }
+    const aguaBogota = aguaDisponible * prioridadBogota;
+    const aguaFunza = aguaDisponible * prioridadFunza;
+    const aguaMosquera = aguaDisponible * prioridadMosquera;
 
     const satisfaccionBogota = calcularSatisfaccion(aguaBogota, contaminante, temperatura, prioridadBogota);
     const satisfaccionFunza = calcularSatisfaccion(aguaFunza, contaminante, temperatura, prioridadFunza);
@@ -109,31 +102,30 @@ const AquaOptimizer = () => {
       mosquera: satisfaccionMosquera
     });
 
-    let mensajeExplicacion = "La satisfacción ha cambiado: ";
-    let razones = [];
+    setMensaje(`Distribución optimizada: Bogotá (${aguaBogota}L), Funza (${aguaFunza}L), Mosquera (${aguaMosquera}L)`);
 
-    const compararSatisfaccion = (nuevo, anterior, nombre) => {
-      if (anterior !== null) {
-        if (nuevo > anterior) {
-          return `La satisfacción en ${nombre} ha subido.`;
-        } else if (nuevo < anterior) {
-          return `La satisfacción en ${nombre} ha bajado.`;
-        }
-      }
-      return `La satisfacción en ${nombre} se mantiene.`;
-    };
-
-    const mensajeBogota = compararSatisfaccion(satisfaccionBogota, aguaAnteriorBogota, 'Bogotá');
-    const mensajeFunza = compararSatisfaccion(satisfaccionFunza, aguaAnteriorFunza, 'Funza');
-    const mensajeMosquera = compararSatisfaccion(satisfaccionMosquera, aguaAnteriorMosquera, 'Mosquera');
-
-    razones.push(mensajeBogota);
-    razones.push(mensajeFunza);
-    razones.push(mensajeMosquera);
-
-    mensajeExplicacion += razones.join(", ") + ".";
-
-    setMensaje(mensajeExplicacion);
+    // Actualizar los datos del gráfico de barras
+    setDataBarras({
+      labels: ['Bogotá', 'Funza', 'Mosquera'],
+      datasets: [
+        {
+          label: 'Agua Asignada (L)',
+          data: [aguaBogota, aguaFunza, aguaMosquera],
+          backgroundColor: 'rgba(153, 102, 255, 0.5)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderWidth: 1,
+          barPercentage: 0.4
+        },
+        {
+          label: 'Población',
+          data: [poblacionBogota, poblacionFunza, poblacionMosquera],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+          barPercentage: 0.4
+        },
+      ]
+    });
   };
 
   const resetearHistorial = () => {
@@ -142,47 +134,159 @@ const AquaOptimizer = () => {
       funza: [],
       mosquera: []
     });
-    setMensaje(""); // Reiniciar mensaje
-    setUltimosValoresSatisfaccion({ bogota: null, funza: null, mosquera: null }); // Reiniciar últimos valores
+    setUltimosValoresSatisfaccion({ bogota: null, funza: null, mosquera: null });
+    setMensaje("");
+    setDataBarras({ labels: ['Bogotá', 'Funza', 'Mosquera'], datasets: [] }); // Resetear datos del gráfico
   };
 
+  // Gráfico de líneas: Satisfacción a lo largo del tiempo
   const dataLineas = {
     labels: historialSatisfaccion.bogota.map((_, index) => index + 1),
     datasets: [
       {
         label: 'Bogotá',
-        data: [0, ...historialSatisfaccion.bogota],
-        borderColor: 'rgba(255, 0, 0, 1)',
+        data: historialSatisfaccion.bogota,
+        borderColor: 'rgba(230, 126, 34, 1)',
         fill: false,
         tension: 0.4
       },
       {
         label: 'Funza',
-        data: [0, ...historialSatisfaccion.funza],
-        borderColor: 'rgba(255, 255, 255, 1)',
+        data: historialSatisfaccion.funza,
+        borderColor: 'rgba(52, 152, 219, 1)',
         fill: false,
         tension: 0.4
       },
       {
         label: 'Mosquera',
-        data: [0, ...historialSatisfaccion.mosquera],
-        borderColor: 'rgba(0, 128, 0, 1)',
+        data: historialSatisfaccion.mosquera,
+        borderColor: 'rgba(39, 174, 96, 1)',
         fill: false,
         tension: 0.4
       }
     ]
   };
 
+  // Gráfico de dona: Porcentaje de agua asignada reemplazado por gráfico de total de agua asignada
+  const dataAguaAsignada = {
+    labels: ['Bogotá', 'Funza', 'Mosquera'],
+    datasets: [
+      {
+        label: 'Agua Asignada (L)',
+        data: [aguaDisponible * prioridadBogota, aguaDisponible * prioridadFunza, aguaDisponible * prioridadMosquera],
+        backgroundColor: ['rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)', 'rgba(75, 192, 192, 0.7)']
+      }
+    ]
+  };
+
+  // Gráfico de dispersión: Historial de satisfacción
+  const dataDispercion = {
+    datasets: [
+      {
+        label: 'Bogotá',
+        data: historialSatisfaccion.bogota.map((satisfaccion, index) => ({
+          x: index + 1,
+          y: satisfaccion
+        })),
+        borderColor: 'rgba(230, 126, 34, 1)',
+        backgroundColor: 'rgba(230, 126, 34, 0.3)',
+        fill: false
+      },
+      {
+        label: 'Funza',
+        data: historialSatisfaccion.funza.map((satisfaccion, index) => ({
+          x: index + 1,
+          y: satisfaccion
+        })),
+        borderColor: 'rgba(52, 152, 219, 1)',
+        backgroundColor: 'rgba(52, 152, 219, 0.3)',
+        fill: false
+      },
+      {
+        label: 'Mosquera',
+        data: historialSatisfaccion.mosquera.map((satisfaccion, index) => ({
+          x: index + 1,
+          y: satisfaccion
+        })),
+        borderColor: 'rgba(39, 174, 96, 1)',
+        backgroundColor: 'rgba(39, 174, 96, 0.3)',
+        fill: false
+      }
+    ]
+  };
+
   return (
-    <div>
-      <h2>Optimización de Agua</h2>
-      <p>Agua disponible: {aguaDisponible} litros</p>
-      <p>Nivel de contaminante: {contaminante}</p>
-      <p>Temperatura: {temperatura}°C</p>
-      <button onClick={optimizarDistribucionAgua}>Optimizar</button>
-      <button onClick={resetearHistorial}>Resetear Historial</button>
-      <Line data={dataLineas} />
-      <p>{mensaje}</p>
+    <div className='containerMain'>
+      <article>
+        <h2>Optimización de Recursos Hídricos</h2>
+        <motion.button
+          onClick={optimizarDistribucionAgua}
+          whileHover={{ scale: 1.2 }} // Efecto al pasar el mouse
+          whileTap={{ scale: 0.8 }} // Efecto al hacer clic
+          transition={{ type: "spring", stiffness: 450, damping: 17 }} // Transición de la animación
+          style={{
+            display: "inline-block",
+            padding: "2% 2%",
+            backgroundColor: "#1a1a1a",
+            color: "rgba(255, 255, 255, 0.87)",
+            borderRadius: "4px",
+            textDecoration: "none",
+            textAlign: "center",
+            margin: "5%",
+            border: "1px solid #646cff",
+          }}
+        >
+          Optimizar Distribución
+        </motion.button>
+
+        <motion.button
+          onClick={resetearHistorial}
+          whileHover={{ scale: 1.2 }} // Efecto al pasar el mouse
+          whileTap={{ scale: 0.8 }} // Efecto al hacer clic
+          transition={{ type: "spring", stiffness: 450, damping: 17 }} // Transición de la animación
+          style={{
+            display: "inline-block",
+            padding: "2% 2%",
+            backgroundColor: "#1a1a1a",
+            color: "rgba(255, 255, 255, 0.87)",
+            borderRadius: "4px",
+            textDecoration: "none",
+            textAlign: "center",
+            margin: "5%",
+            border: "1px solid #e74c3c",
+          }}
+        >
+          Resetear Historial
+        </motion.button>
+        <div className="resultado">
+          <h2>Resultado:</h2>
+          <div>
+            {/* <p>{mensaje}</p>   */}
+            <h3>Agua Disponible: {aguaDisponible} L</h3>
+            <h3>Contaminante: {contaminante}</h3>
+            <h3>Temperatura: {temperatura} °C</h3>
+          </div>
+        </div>
+      </article>
+      <article>
+        <h3>Gráfico de Satisfacción a lo Largo del Tiempo</h3>
+        <Line data={dataLineas} />
+      </article>
+      <article>
+        <h3>Gráfico de Barras: Agua Asignada y Población</h3>
+        <Bar data={dataBarras} />
+      </article>
+      <article><h3>Gráfico de Dispersión: Historial de Satisfacción</h3>
+        <Scatter data={dataDispercion} /></article>
+
+
+
+
+
+      {/* <h3>Gráfico de Total de Agua Asignada</h3>
+      <Doughnut data={dataAguaAsignada} /> */}
+
+
     </div>
   );
 };

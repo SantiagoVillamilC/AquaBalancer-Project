@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import aquaLogo from '../public/water-svgrepo-com.svg'
 import { motion } from "framer-motion";
 import './App.css'
 import AquaOptimizer from './components/AquaOptimizer';
@@ -8,7 +8,8 @@ import Simulation from './components/Simulation';
 import ComparisonTable from './components/ComparisonTable';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -56,34 +57,62 @@ function App() {
           </div>
         </div>
       </div>
-      <section>
-        <h3>¿Que es?</h3>
-        <p>AquaBalance es una herramienta interactiva diseñada para optimizar la distribución del agua de manera eficiente y sostenible en regiones afectadas por la escasez. Surge como respuesta a los recientes desafíos en la gestión de recursos hídricos en Bogotá y municipios cercanos, donde la disminución en los niveles de los embalses ha llevado a cortes en el suministro de agua.
+      <section className='sectionWhat'>
+        <div>
+          <h2>¿Que es?</h2>
+          <p>AquaBalance surge como respuesta a los recientes desafíos en la gestión de recursos hídricos en Bogotá y municipios cercanos, donde la disminución en los niveles de los embalses ha llevado a cortes en el suministro de agua
 
-El propósito principal de AquaBalance es ayudar a encontrar un equilibrio óptimo entre la cantidad y calidad del agua distribuida a las comunidades afectadas, utilizando técnicas avanzadas de cálculo multivariado. A través de este enfoque, se busca maximizar el aprovechamiento de los recursos hídricos disponibles, mientras se asegura que el agua cumpla con los estándares de calidad necesarios para el consumo humano.
+            siendo el propósito principal ayudar a encontrar un equilibrio óptimo entre la cantidad y calidad del agua distribuida a las comunidades afectadas, utilizando técnicas avanzadas de cálculo multivariado. <br /> A través de este enfoque, se busca maximizar el aprovechamiento de los recursos hídricos disponibles, mientras se asegura que el agua cumpla con los estándares de calidad necesarios para el consumo humano.
 
-Esta plataforma permite a los usuarios explorar diferentes escenarios de distribución y comprender cómo decisiones estratégicas pueden mejorar la sostenibilidad y la equidad en el uso de este recurso vital. AquaBalance no solo contribuye a la planificación de la gestión hídrica, sino que también fomenta una mayor conciencia sobre el uso responsable del agua en zonas con recursos limitados.</p>
+            Aqui podras explorar diferentes escenarios de distribución y comprender cómo decisiones estratégicas pueden mejorar la sostenibilidad y la equidad en el uso de este recurso vital y no solo contribuyendo a la planificación de la gestión hídrica, sino que también se busca fomentar una mayor conciencia sobre el uso responsable del agua en zonas con recursos limitados.</p>
+        </div>
+        <picture>
+          <img src={aquaLogo} alt="" />
+        </picture>
       </section>
-      <section>
+      <section className='sectionHow'>
         <h3>¿Cómo funciona?</h3>
-        <p>AquaBalance funciona como una plataforma interactiva que utiliza técnicas avanzadas de cálculo multivariado para optimizar la distribución del agua entre diferentes regiones afectadas por la escasez. El proceso se basa en la integración de diversas variables clave, como la capacidad de los embalses, la concentración de contaminantes y la temperatura del agua, con el fin de garantizar un suministro eficiente y saludable.
+        <p>El proceso se basa en la integración de diversas variables clave, como la capacidad de los embalses, la concentración de contaminantes y la temperatura del agua, con el fin de garantizar un suministro eficiente y saludable.
 
-Entrada de Datos: La herramienta permite ingresar datos relevantes sobre las condiciones actuales de los embalses, los requerimientos de agua de cada región y las restricciones existentes, como los niveles mínimos de calidad aceptables para el agua.
+          Utilizando técnicas como las derivadas parciales y los multiplicadores de Lagrange, el sistema evalúa las interacciones entre las diferentes variables, maximizando la distribución de agua sin comprometer la calidad ni la capacidad disponible, esta optimización busca encontrar el equilibrio perfecto entre satisfacer las necesidades de cada región y respetar las limitaciones de los recursos hídricos. <br /> <br />
 
-Optimización con Cálculo Multivariado: Utilizando técnicas como las derivadas parciales y los multiplicadores de Lagrange, el sistema evalúa las interacciones entre las diferentes variables, maximizando la distribución de agua sin comprometer la calidad ni la capacidad disponible. Esta optimización busca encontrar el equilibrio perfecto entre satisfacer las necesidades de cada región y respetar las limitaciones de los recursos hídricos.
+          Simulación de Escenarios: AquaBalance permite simular distintos escenarios de distribución de agua, que puedes visualizar cómo pequeños cambios en las variables, como un aumento en la demanda de una región o un cambio en la calidad del agua, impactan en el sistema general. <br /> <br />
 
-Simulación de Escenarios: AquaBalance permite simular distintos escenarios de distribución de agua. Los usuarios pueden visualizar cómo pequeños cambios en las variables, como un aumento en la demanda de una región o un cambio en la calidad del agua, impactan en el sistema general.
-
-Resultados Visuales: A través de gráficos interactivos y mapas dinámicos, los resultados de la optimización se muestran de forma clara y accesible, permitiendo a los usuarios explorar y analizar cómo se distribuyen los recursos de agua en cada escenario.
-
-Este proceso no solo facilita la toma de decisiones informadas en cuanto a la gestión de recursos hídricos, sino que también promueve una visión integral y sostenible del uso del agua en regiones con desafíos de disponibilidad.</p>
+          Resultados Visuales: A través de gráficos interactivos, los resultados de la optimización se muestran de forma clara y accesible, permitiendo explorar y analizar cómo se distribuyen los recursos de agua en cada escenario. <br /></p>
       </section>
       <section>
-        <AquaOptimizer/>
+        <AquaOptimizer />
         {/* <Simulation/> */}
         {/* <ComparisonTable/> */}
       </section>
-      <footer></footer>
+      <motion.footer
+        className="footer"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: 'easeInOut' }}
+      >
+        <motion.div
+          className="footer-content"
+          // whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
+          <p>Hecho por Santiago V.</p>
+
+          <motion.a
+            href="https://github.com/SantiagoVillamilC/AquaBalancer-Project"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.2, color: '#f39c12' }}
+            whileTap={{ scale: 0.9 }}
+          >
+            Visita el codigo de este proyecto en mi GitHub
+          </motion.a>
+
+          <p>Curso de Estadística</p>
+
+          <p>{currentYear}</p>
+        </motion.div>
+      </motion.footer>
     </>
   )
 }
