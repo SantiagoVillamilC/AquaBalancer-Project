@@ -259,7 +259,7 @@ const AquaOptimizer = () => {
           Resetear Historial
         </motion.button>
         <div className="resultado">
-          <h2>Resultado:</h2>
+          <h2>Datos a optimizar:</h2>
           <div className='infoResult'>
             {/* <p>{mensaje}</p>   */}
             <h3>Agua Disponible: {aguaDisponible} L</h3>
