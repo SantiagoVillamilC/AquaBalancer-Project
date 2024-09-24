@@ -131,7 +131,10 @@ img{
   line-height: 1.5rem;
 }
 
-
+.deep{
+  padding: 1% 5%;
+  text-align: justify;
+}
 
 
 
@@ -139,6 +142,7 @@ img{
   color: #ecf0f1;
   padding: 20px;
   text-align: center;
+  background-color: #1a1a1a;
 }
 
 .footer-content p {

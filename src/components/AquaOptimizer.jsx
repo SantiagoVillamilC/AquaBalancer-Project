@@ -260,7 +260,7 @@ const AquaOptimizer = () => {
         </motion.button>
         <div className="resultado">
           <h2>Resultado:</h2>
-          <div>
+          <div className='infoResult'>
             {/* <p>{mensaje}</p>   */}
             <h3>Agua Disponible: {aguaDisponible} L</h3>
             <h3>Contaminante: {contaminante}</h3>
@@ -278,9 +278,6 @@ const AquaOptimizer = () => {
       </article>
       <article><h3>Gráfico de Dispersión: Historial de Satisfacción</h3>
         <Scatter data={dataDispercion} /></article>
-
-
-
 
 
       {/* <h3>Gráfico de Total de Agua Asignada</h3>

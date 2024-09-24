@@ -17,8 +17,9 @@ function App() {
         <h4>Aqua Balance | Calculo Multivariado</h4>
         <div>
           <u>
-            <ol><a href="">¿Que es?</a></ol>
-            <ol><a href="">¿Como funciona?</a></ol>
+            <ol><a href="#sectionWhat">¿Que es?</a></ol>
+            <ol><a href="#sectionHow">¿Como funciona?</a></ol>
+            <ol><a href="#deep">Explicación</a></ol>
           </u>
         </div>
       </header>
@@ -30,7 +31,7 @@ function App() {
           <p>Aplicando cálculo multivariado para balancear la distribución del agua, priorizando la sostenibilidad y la calidad en cada gota.</p>
           <div>
             <motion.a
-              href="#destino"
+              href="#main"
               className="box"
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
@@ -57,7 +58,7 @@ function App() {
           </div>
         </div>
       </div>
-      <section className='sectionWhat'>
+      <section className='sectionWhat' id='sectionWhat'>
         <div>
           <h2>¿Que es?</h2>
           <p>AquaBalance surge como respuesta a los recientes desafíos en la gestión de recursos hídricos en Bogotá y municipios cercanos, donde la disminución en los niveles de los embalses ha llevado a cortes en el suministro de agua
@@ -70,7 +71,7 @@ function App() {
           <img src={aquaLogo} alt="" />
         </picture>
       </section>
-      <section className='sectionHow'>
+      <section className='sectionHow' id='sectionHow'>
         <h3>¿Cómo funciona?</h3>
         <p>El proceso se basa en la integración de diversas variables clave, como la capacidad de los embalses, la concentración de contaminantes y la temperatura del agua, con el fin de garantizar un suministro eficiente y saludable.
 
@@ -80,10 +81,52 @@ function App() {
 
           Resultados Visuales: A través de gráficos interactivos, los resultados de la optimización se muestran de forma clara y accesible, permitiendo explorar y analizar cómo se distribuyen los recursos de agua en cada escenario. <br /></p>
       </section>
-      <section>
+      <section id='main'>
         <AquaOptimizer />
         {/* <Simulation/> */}
         {/* <ComparisonTable/> */}
+      </section>
+      <section className='deep' id='deep'>
+        <h3>Profundiza el funcionamiento interno del sitio</h3>
+        <p>Como lo puedes ver el sitio diseñado para optimizar la distribución de agua en tres regiones críticas: Bogotá, Funza y Mosquera, a través de una combinación de técnicas de cálculo multivariado y visualización interactiva, la plataforma asigna de manera equitativa la cantidad de agua disponible en función de varios factores, como la calidad del agua y las condiciones ambientales. <br /> A continuación, te explicamos el proceso en detalle.</p>
+        <ol>
+          <li>
+            <h4>Recopilación de Datos:</h4>
+            <p>La plataforma considera varios parámetros fundamentales:</p>
+            <ol><strong>Agua Disponible:</strong> Se estima la cantidad total de agua que puede ser distribuida entre las tres regiones.</ol>
+            <ol><strong>Población:</strong> La cantidad de habitantes en cada región, con datos estimados para Bogotá, Funza y Mosquera.</ol>
+            <ol><strong>Calidad del Agua:</strong> Indicada por la concentración de contaminantes y la temperatura del agua, que afectan directamente la satisfacción de los habitantes.</ol>
+          </li>
+          <li>
+      <h4>Modelo Matemático:</h4>
+      <p>El cálculo central de AquaBalance se basa en técnicas de optimización multivariada, utilizando derivadas parciales y multiplicadores de Lagrange. La plataforma maximiza una función de satisfacción cuadrática, que mide el bienestar de cada región en función de:</p>
+      <ol>
+        <li><strong>Cantidad de agua distribuida.</strong></li>
+        <li><strong>Concentración de contaminantes:</strong> Donde una menor concentración mejora la satisfacción.</li>
+        <li><strong>Temperatura:</strong> La temperatura óptima está en torno a los 20°C.</li>
+      </ol>
+      <p>La función de satisfacción penaliza las desviaciones de los niveles óptimos de calidad del agua y ajusta la cantidad en cada región para equilibrar la distribución.</p>
+    </li>
+    <li>
+      <h4>Optimización y Distribución del Agua:</h4>
+      <p>Al pulsar el botón de "Optimizar Distribución", la plataforma genera un cálculo aleatorio de los parámetros ambientales y de disponibilidad de agua. La cantidad de agua disponible se distribuye proporcionalmente entre Bogotá, Funza y Mosquera, según la prioridad de cada región, basada en su población.</p>
+      <p>Los factores como la contaminación y la temperatura se ajustan mediante fórmulas que evalúan su impacto en la satisfacción general. Por ejemplo, una mayor concentración de contaminantes reduce la satisfacción, mientras que una temperatura cercana a los 20°C la aumenta.</p>
+    </li>
+    <li>
+      <h4>Visualización y Resultados:</h4>
+      <p>La plataforma muestra varios gráficos interactivos que permiten a los usuarios visualizar los resultados en tiempo real:</p>
+      <ol>
+        <li><strong>Gráfico de Líneas:</strong> Muestra la satisfacción de cada región a lo largo del tiempo.</li>
+        <li><strong>Gráfico de Barras:</strong> Compara la cantidad de agua asignada con la población de cada región.</li>
+        <li><strong>Gráfico de Dispersión:</strong> Ilustra el historial de satisfacción de cada región en distintas simulaciones.</li>
+      </ol>
+      <p>Estos gráficos ayudan a entender cómo las decisiones de distribución afectan la satisfacción global y permiten a los usuarios explorar diferentes escenarios.</p>
+    </li>
+    <li>
+      <h4>Interpretación de los Resultados:</h4>
+      <p>Cada simulación ofrece un resumen detallado de cómo se ha distribuido el agua entre las tres regiones, el nivel de contaminantes y la temperatura. El objetivo es encontrar un equilibrio que maximice la satisfacción general de todas las regiones.</p>
+    </li>
+        </ol>
       </section>
       <motion.footer
         className="footer"
